@@ -24,19 +24,23 @@ jobs:
         with:
           credentials_json: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}  
       
-      - name: Install the gcloud cli
+      # ☁️ INSTALL GCLOUD
+      - name: Setup gcloud
         uses: google-github-actions/setup-gcloud@v2
         with:
           project_id: ${{ secrets.GOOGLE_PROJECT }}
-          service_account_key: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
-          export_default_credentials: true
 
-      - name: build and push the docker image    
-        env:
-          GOOGLE_PROJECTS: ${{ secrets.GOOGLE_PROJECT }}
+      # 🔑 CONFIGURE DOCKER FOR ARTIFACT REGISTRY
+      - name: Configure Docker
         run: |
-          gcloud auth configure-docker us-central1-docker.pkg.dev  
-          docker build -t us-central1-docker.pkg.dev/myapigee-123/demo-artifact-registry/nginx:latest .
-          docker push us-central1-docker.pkg.dev/myapigee-123/demo-artifact-registry/nginx:latest
+        gcloud auth configure-docker us-central1-docker.pkg.dev --quiet
 
-      
+        # 📦 BUILD IMAGE
+      - name: Build Docker image
+        run: |
+        docker build -t us-central1-docker.pkg.dev/myapigee-123/demo-artifact-registry/nginx:latest .
+
+       # 📤 PUSH IMAGE
+      - name: Push Docker image
+        run: |
+        docker push us-central1-docker.pkg.dev/myapigee-123/demo-artifact-registry/nginx:latest
