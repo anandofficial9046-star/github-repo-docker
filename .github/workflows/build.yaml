@@ -38,9 +38,9 @@ jobs:
         # 📦 BUILD IMAGE
       - name: Build Docker image
         run: |
-        docker build -t us-central1-docker.pkg.dev/myapigee-123/demo-artifact-registry/nginx:latest .
+          docker build -t us-central1-docker.pkg.dev/myapigee-123/demo-artifact-registry/nginx:latest .
 
        # 📤 PUSH IMAGE
       - name: Push Docker image
         run: |
-        docker push us-central1-docker.pkg.dev/myapigee-123/demo-artifact-registry/nginx:latest
+          docker push us-central1-docker.pkg.dev/myapigee-123/demo-artifact-registry/nginx:latest
