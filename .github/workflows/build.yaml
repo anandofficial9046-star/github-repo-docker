@@ -1,46 +1,41 @@
-name: 'Build Nginx'
+name: Build Nginx
 
 on:
   push:
     branches:
-      - 'main'
+      - main
 
 jobs:
   deploy:
-    name: 'Setup, Build, Publish, and Deploy'
-    runs-on: 'ubuntu-latest'
-    
+    name: Setup, Build, Publish, and Deploy
+    runs-on: ubuntu-latest
+
     permissions:
       contents: read
-      id-token: write # REQUIRED for auth@v2
+      id-token: write
 
     steps:
-      - name: 'Checkout'
+      - name: Checkout
         uses: actions/checkout@v4
 
-      # 🔐 AUTHENTICATE FIRST
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v2
         with:
-          credentials_json: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}  
-      
-      # ☁️ INSTALL GCLOUD
+          credentials_json: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+
       - name: Setup gcloud
         uses: google-github-actions/setup-gcloud@v2
         with:
           project_id: ${{ secrets.GOOGLE_PROJECT }}
 
-      # 🔑 CONFIGURE DOCKER FOR ARTIFACT REGISTRY
       - name: Configure Docker
         run: |
-        gcloud auth configure-docker us-central1-docker.pkg.dev --quiet
+          gcloud auth configure-docker us-central1-docker.pkg.dev --quiet
 
-        # 📦 BUILD IMAGE
       - name: Build Docker image
         run: |
           docker build -t us-central1-docker.pkg.dev/myapigee-123/demo-artifact-registry/nginx:latest .
 
-       # 📤 PUSH IMAGE
       - name: Push Docker image
         run: |
           docker push us-central1-docker.pkg.dev/myapigee-123/demo-artifact-registry/nginx:latest
