@@ -10,12 +10,22 @@ jobs:
     name: 'Setup, Build, Publish, and Deploy'
     runs-on: 'ubuntu-latest'
     
+    permissions:
+      contents: read
+      id-token: write # REQUIRED for auth@v2
+
     steps:
       - name: 'Checkout'
         uses: actions/checkout@v4
 
+      # 🔐 AUTHENTICATE FIRST
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}  
+      
       - name: Install the gcloud cli
-        uses: google-github-actions/setup-gcloud@v0
+        uses: google-github-actions/setup-gcloud@v2
         with:
           project_id: ${{ secrets.GOOGLE_PROJECT }}
           service_account_key: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
